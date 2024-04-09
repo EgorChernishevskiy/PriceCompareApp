@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "590650355193",
+    "project_id": "pricecompare-13894",
+    "storage_bucket": "pricecompare-13894.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:590650355193:android:023ad859875ae9eb3ca128",
+        "android_client_info": {
+          "package_name": "com.example.pricecompare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALkFI8y5TKZBhXqupALdwrPD8OwicYggo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
