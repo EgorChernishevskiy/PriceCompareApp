@@ -15,9 +15,10 @@
             android:layout_height="match_parent">
 
             <ProgressBar
+                android:id="@+id/mainCategoryProgressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -43,20 +44,15 @@
                 android:id="@+id/rvBestProducts"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="10dp"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="8dp"
+                android:overScrollMode="never"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvBestProducts"
-                android:overScrollMode="never">
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvBestProducts">
 
             </androidx.recyclerview.widget.RecyclerView>
-
-
-
-
-
-
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
