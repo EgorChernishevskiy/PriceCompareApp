@@ -29,19 +29,19 @@
             android:id="@+id/tvSpecialProductName"
             android:layout_width="163dp"
             android:layout_height="42dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="188dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
             android:fontFamily="@font/poppins_thin"
             android:text="Scotch Premium"
             android:textColor="@color/black"
             android:textSize="17sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/imageSpecialRvItem" />
+            app:layout_constraintTop_toBottomOf="@id/imageSpecialRvItem" />
 
         <TextView
             android:id="@+id/tvSpecialProductPrice"
-            android:layout_width="80dp"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="12dp"
@@ -54,7 +54,7 @@
 
         <TextView
             android:id="@+id/tvSpecialProductShop"
-            android:layout_width="80dp"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="16dp"
@@ -72,7 +72,7 @@
             android:orientation="vertical"
             app:layout_constraintStart_toEndOf="@+id/tvSpecialProductShop"
             tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteY="250dp">
+            tools:layout_editor_absoluteY="246dp">
 
             <ImageView
                 android:layout_width="10dp"
@@ -91,8 +91,8 @@
             android:fontFamily="@font/poppins_light"
             android:text="Add to cart"
             android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="10sp"
+            android:textColor="@color/black"
+            android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.487"
