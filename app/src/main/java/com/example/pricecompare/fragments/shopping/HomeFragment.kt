@@ -8,51 +8,57 @@ import androidx.fragment.app.Fragment
 import com.example.pricecompare.R
 import com.example.pricecompare.adapters.HomeViewpagerAdapter
 import com.example.pricecompare.databinding.FragmentHomeBinding
-import com.example.pricecompare.fragments.categories.BreadFragment
-import com.example.pricecompare.fragments.categories.GroceryFragment
+import com.example.pricecompare.fragments.categories.BaseCategoryFragment
 import com.example.pricecompare.fragments.categories.MainCategoryFragment
-import com.example.pricecompare.fragments.categories.MeatFragment
-import com.example.pricecompare.fragments.categories.MilkFragment
-import com.example.pricecompare.fragments.categories.PastaFragment
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.firestore.FirebaseFirestore
 
-class HomeFragment: Fragment(R.layout.fragment_home) {
+class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentHomeBinding.inflate(inflater)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val categoriesFragments = arrayListOf<Fragment>(
-            MainCategoryFragment(),
-            BreadFragment(),
-            GroceryFragment(),
-            MeatFragment(),
-            MilkFragment(),
-            PastaFragment()
-        )
-
-        val viewpager2Adapter = HomeViewpagerAdapter(categoriesFragments,
-                                                     childFragmentManager, lifecycle)
-        binding.viewpagerHome.adapter = viewpager2Adapter
-        TabLayoutMediator(binding.tabLayout, binding.viewpagerHome){tab, position ->
-            when (position){
-                0 -> tab.text = "Main"
-                1 -> tab.text = "Grocery"
-                2 -> tab.text = "Milk"
-                3 -> tab.text = "Bread"
-                4 -> tab.text = "Pasta"
-                5 -> tab.text = "Meat"
-            }
-        }.attach()
+        loadCategoriesFromFirestore()
     }
 
+    private fun loadCategoriesFromFirestore() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("Products")
+            .get()
+            .addOnSuccessListener { result ->
+                val categories = mutableListOf<String>("main")  // "main" добавляется первым в список
+                for (document in result) {
+                    val category = document.getString("category") ?: continue
+                    if (category != "main" && !categories.contains(category)) {
+                        categories.add(category)
+                    }
+                }
+                setupViewPagerAndTabs(categories)
+            }
+            .addOnFailureListener { e ->
+                // Обработка ошибок
+            }
+    }
+
+    private fun setupViewPagerAndTabs(categories: List<String>) {
+        val fragments = categories.map { categoryName ->
+            if (categoryName == "main") {
+                MainCategoryFragment()  // Используется специализированный фрагмент для "main"
+            } else {
+                BaseCategoryFragment.newInstance(categoryName)
+            }
+        }
+        val adapter = HomeViewpagerAdapter(fragments, childFragmentManager, lifecycle)
+        binding.viewpagerHome.adapter = adapter
+
+        TabLayoutMediator(binding.tabLayout, binding.viewpagerHome) { tab, position ->
+            tab.text = if (categories[position] == "main") "Main" else categories[position]
+        }.attach()
+    }
 }
+
