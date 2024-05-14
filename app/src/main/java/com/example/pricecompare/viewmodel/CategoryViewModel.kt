@@ -13,12 +13,15 @@ class CategoryViewModel(private val firestore: FirebaseFirestore, private val ca
     private val _products = MutableStateFlow<Resource<List<Product>>>(Resource.Unspecified())
     val products: StateFlow<Resource<List<Product>>> = _products
 
+    private val pagingInfo = pagingInfoCategory()
+
     init {
         loadProducts()
     }
 
-    private fun loadProducts() {
+    fun loadProducts() {
         firestore.collection("Products")
+            .limit(pagingInfo.productsPage * 10)
             .whereEqualTo("category", categoryName)
             .get()
             .addOnSuccessListener { result ->
@@ -34,7 +37,16 @@ class CategoryViewModel(private val firestore: FirebaseFirestore, private val ca
                         images = document.get("images") as List<String>? ?: listOf()
                     )
                 }
+                pagingInfo.isPagingEnd = productsList == pagingInfo.oldProducts
+                pagingInfo.oldProducts = productsList
                 _products.value = Resource.Success(productsList)
             }
     }
 }
+
+internal data class pagingInfoCategory(
+    var productsPage: Long = 1,
+    var oldProducts: List<Product> = emptyList(),
+    var isPagingEnd: Boolean = false
+
+)

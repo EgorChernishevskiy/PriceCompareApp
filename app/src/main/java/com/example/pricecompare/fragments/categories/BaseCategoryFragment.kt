@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -50,13 +51,13 @@ class BaseCategoryFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.products.collectLatest { resource ->
                     when (resource) {
-                        is Resource.Loading -> showLoading()
+                        is Resource.Loading -> binding.baseCategoryProgressBarBot.visibility = View.VISIBLE
                         is Resource.Success -> {
                             productsAdapter.differ.submitList(resource.data)
-                            hideLoading()
+                            binding.baseCategoryProgressBarBot.visibility = View.GONE
                         }
                         is Resource.Error -> {
-                            hideLoading()
+                            binding.baseCategoryProgressBarBot.visibility = View.GONE
                             Toast.makeText(requireContext(), resource.message, Toast.LENGTH_SHORT).show()
                         }
                         else -> Unit
@@ -64,6 +65,13 @@ class BaseCategoryFragment : Fragment() {
                 }
             }
         }
+
+        binding.nestedScrollBaseCategory.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener{ v, _, scrollY, _, _ ->
+            if (v.getChildAt(0).bottom <= v.height + scrollY){
+                viewModel.loadProducts()
+            }
+        })
+
     }
 
     companion object {
