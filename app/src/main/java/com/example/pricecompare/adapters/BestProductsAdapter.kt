@@ -16,6 +16,7 @@ class BestProductsAdapter: RecyclerView.Adapter<BestProductsAdapter.BestProducts
             binding.apply {
                 Glide.with(itemView).load(product.images[0]).into(imageSpecialRvItem)
                 tvSpecialProductName.text = product.name
+                tvSpecialProductShop.text = product.shop
                 tvSpecialProductPrice.text = product.price.toString()
             }
 
@@ -45,9 +46,14 @@ class BestProductsAdapter: RecyclerView.Adapter<BestProductsAdapter.BestProducts
         val product = differ.currentList[position]
         holder.bind(product)
 
+        holder.itemView.setOnClickListener{
+            onClick?.invoke(product)
+        }
     }
 
     override fun getItemCount(): Int {
         return differ.currentList.size
     }
+
+    var onClick:((Product) -> Unit)? = null
 }

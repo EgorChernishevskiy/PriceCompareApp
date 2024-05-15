@@ -23,10 +23,12 @@ import kotlinx.coroutines.launch
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.launch
 import com.example.pricecompare.viewmodel.MainCategoryViewModelFactory
 import com.google.firebase.firestore.FirebaseFirestore
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.pricecompare.fragments.shopping.ProductDetailsFragment
 
 
 private val TAG = "MainCategoryFragment"
@@ -35,6 +37,7 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
     private lateinit var binding: FragmentMainCategoryBinding
     private lateinit var specialProductsAdapter: BestProductsAdapter
     private lateinit var viewModel: MainCategotyViewModel
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,6 +60,12 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
         super.onViewCreated(view, savedInstanceState)
 
         setupSpecialProductsRv()
+
+        specialProductsAdapter.onClick = {
+            val b = Bundle().apply { putString("productName", it.name) }
+            findNavController().navigate(R.id.action_homeFragment_to_productDetailsFragment, b)
+        }
+
 
         // Используйте repeatOnLifecycle для управления корутинами в зависимости от жизненного цикла
         viewLifecycleOwner.lifecycleScope.launch {
