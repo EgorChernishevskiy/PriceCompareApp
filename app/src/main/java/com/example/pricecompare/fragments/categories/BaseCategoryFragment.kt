@@ -16,12 +16,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.pricecompare.R
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import com.example.pricecompare.adapters.BestProductsAdapter
 import com.example.pricecompare.adapters.ProductsAdapter
 import com.example.pricecompare.databinding.FragmentBaseCategoryBinding
 import com.example.pricecompare.utils.Resource
 import com.example.pricecompare.viewmodel.CategoryViewModel
-import com.example.pricecompare.viewmodel.CategoryViewModelFactory
+import com.example.pricecompare.viewmodel.factory.CategoryViewModelFactory
 import com.google.firebase.firestore.FirebaseFirestore
 
 class BaseCategoryFragment : Fragment() {

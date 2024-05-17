@@ -1,7 +1,8 @@
-package com.example.pricecompare.viewmodel
+package com.example.pricecompare.viewmodel.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.pricecompare.viewmodel.CategoryViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 
 class CategoryViewModelFactory(private val firestore: FirebaseFirestore, private val categoryName: String?) : ViewModelProvider.Factory {

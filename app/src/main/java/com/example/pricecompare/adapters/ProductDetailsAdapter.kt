@@ -13,19 +13,27 @@ import com.example.pricecompare.databinding.SpecialRvItemBinding
 import android.view.View
 import android.widget.TextView
 import com.example.pricecompare.R
+import com.example.pricecompare.data.CartProduct
+import com.example.pricecompare.viewmodel.ProductDetailsViewModel
 
 
-class ProductDetailsAdapter() : RecyclerView.Adapter<ProductDetailsAdapter.ProductDetailsViewHolder>() {
+class ProductDetailsAdapter(private val viewModel: ProductDetailsViewModel) : RecyclerView.Adapter<ProductDetailsAdapter.ProductDetailsViewHolder>() {
 
     inner class ProductDetailsViewHolder(private val binding: ProductDetailsCardBinding): RecyclerView.ViewHolder(binding.root){
 
-        fun bind(product: Product){
+        fun bind(product: Product, viewModel: ProductDetailsViewModel){
             binding.apply {
                 Glide.with(itemView).load(product.images[0]).into(imageItem)
                 tvProductName.text = product.name
                 tvProductShop.text = product.shop
                 tvProductPrice.text = product.price.toString()
+
+                btnAddToCart.setOnClickListener {
+                    val cartProduct = CartProduct(product, 1, product.shop)
+                    viewModel.addUpdateProductInCart(cartProduct)
+                }
             }
+
 
         }
     }
@@ -53,7 +61,7 @@ class ProductDetailsAdapter() : RecyclerView.Adapter<ProductDetailsAdapter.Produ
 
     override fun onBindViewHolder(holder: ProductDetailsViewHolder, position: Int) {
         val product = differ.currentList[position]
-        holder.bind(product)
+        holder.bind(product, viewModel)
     }
 
     override fun getItemCount(): Int {

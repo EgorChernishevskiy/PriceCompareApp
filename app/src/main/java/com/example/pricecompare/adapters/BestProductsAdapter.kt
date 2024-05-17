@@ -6,18 +6,27 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.pricecompare.data.CartProduct
 import com.example.pricecompare.data.Product
 import com.example.pricecompare.databinding.SpecialRvItemBinding
-class BestProductsAdapter: RecyclerView.Adapter<BestProductsAdapter.BestProductsViewHolder>() {
+import com.example.pricecompare.viewmodel.MainCategotyViewModel
+import com.example.pricecompare.viewmodel.ProductDetailsViewModel
+
+class BestProductsAdapter(private val viewModel: MainCategotyViewModel): RecyclerView.Adapter<BestProductsAdapter.BestProductsViewHolder>() {
 
     inner class BestProductsViewHolder(private val binding: SpecialRvItemBinding): RecyclerView.ViewHolder(binding.root){
 
-        fun bind(product: Product){
+        fun bind(product: Product, viewModel: MainCategotyViewModel){
             binding.apply {
                 Glide.with(itemView).load(product.images[0]).into(imageSpecialRvItem)
                 tvSpecialProductName.text = product.name
                 tvSpecialProductShop.text = product.shop
                 tvSpecialProductPrice.text = product.price.toString()
+
+                btnAddToCart.setOnClickListener {
+                    val cartProduct = CartProduct(product, 1, product.shop)
+                    viewModel.addUpdateProductInCart(cartProduct)
+                }
             }
 
         }
@@ -44,7 +53,7 @@ class BestProductsAdapter: RecyclerView.Adapter<BestProductsAdapter.BestProducts
 
     override fun onBindViewHolder(holder: BestProductsViewHolder, position: Int) {
         val product = differ.currentList[position]
-        holder.bind(product)
+        holder.bind(product, viewModel)
 
         holder.itemView.setOnClickListener{
             onClick?.invoke(product)
