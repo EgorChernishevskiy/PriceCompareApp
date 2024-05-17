@@ -50,12 +50,13 @@
             android:id="@+id/tvProductCartPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:fontFamily="@font/poppins_light"
             android:text="$50"
             android:textColor="@color/black"
             android:textSize="14sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/tvProductCartName"
             app:layout_constraintTop_toBottomOf="@id/tvProductCartName" />
 
@@ -84,14 +85,16 @@
             android:id="@+id/tvProductCartShop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:fontFamily="@font/sf_pro_display"
             android:text="Magnit"
             android:textColor="@color/black"
             android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tvProductCartPrice"
-            app:layout_constraintTop_toBottomOf="@+id/tvProductCartName" />
+            app:layout_constraintTop_toBottomOf="@+id/tvProductCartName"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/tvCartProductQuantity"
@@ -104,9 +107,10 @@
             app:layout_constraintStart_toStartOf="@id/imagePlus"/>
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="34dp"
-            android:layout_height="28dp"
 
+            android:layout_height="28dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="60dp"
             android:orientation="vertical"
