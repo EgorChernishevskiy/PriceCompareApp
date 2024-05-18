@@ -132,7 +132,7 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
         binding.apply {
             rvCart.visibility = View.VISIBLE
             totalBoxContainer.visibility = View.VISIBLE
-            buttonCheckout.visibility = View.VISIBLE
+            //buttonCheckout.visibility = View.VISIBLE
         }
     }
 
@@ -140,7 +140,7 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
         binding.apply {
             rvCart.visibility = View.GONE
             totalBoxContainer.visibility = View.GONE
-            buttonCheckout.visibility = View.GONE
+            //buttonCheckout.visibility = View.GONE
         }
     }
 

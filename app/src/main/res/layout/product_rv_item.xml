@@ -47,7 +47,7 @@
 
             android:layout_marginTop="96dp"
             android:fontFamily="@font/poppins_light"
-            android:text="See more"
+            android:text="Подробнее"
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="14sp"

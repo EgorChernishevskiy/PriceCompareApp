@@ -40,7 +40,7 @@
             android:fontFamily="@font/poppins_light"
             android:text="Chair"
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/imageCartProduct"
             app:layout_constraintTop_toTopOf="@id/imageCartProduct"/>
@@ -50,6 +50,7 @@
             android:id="@+id/tvProductCartPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/poppins_light"
             android:text="$50"
@@ -57,8 +58,9 @@
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@id/tvProductCartName"
-            app:layout_constraintTop_toBottomOf="@id/tvProductCartName" />
+            app:layout_constraintStart_toEndOf="@+id/tvProductCartName"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
             android:id="@+id/imagePlus"
@@ -93,7 +95,7 @@
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tvProductCartPrice"
-            app:layout_constraintTop_toBottomOf="@+id/tvProductCartName"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
@@ -112,7 +114,7 @@
 
             android:layout_height="28dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="16dp"
             android:orientation="vertical"
             app:layout_constraintStart_toEndOf="@+id/tvProductCartShop"
             app:layout_constraintTop_toTopOf="parent"

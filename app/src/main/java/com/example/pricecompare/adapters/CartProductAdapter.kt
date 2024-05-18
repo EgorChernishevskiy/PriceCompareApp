@@ -24,6 +24,7 @@ class CartProductAdapter: RecyclerView.Adapter<CartProductAdapter.CartProductsVi
                 tvProductCartName.text = cartProduct.product.name
                 tvCartProductQuantity.text = cartProduct.quantity.toString()
                 tvProductCartPrice.text = cartProduct.product.price.toString()
+                tvProductCartShop.text = cartProduct.shop
 
                 }
             }

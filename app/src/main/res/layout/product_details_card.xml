@@ -91,7 +91,7 @@
             android:layout_marginTop="16dp"
 
             android:fontFamily="@font/poppins_light"
-            android:text="Add to cart"
+            android:text="В корзину"
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="14sp"

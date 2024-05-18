@@ -31,10 +31,10 @@ class HomeFragment : Fragment() {
         db.collection("Products")
             .get()
             .addOnSuccessListener { result ->
-                val categories = mutableListOf<String>("main")  // "main" добавляется первым в список
+                val categories = mutableListOf<String>("Главная")  // "main" добавляется первым в список
                 for (document in result) {
                     val category = document.getString("category") ?: continue
-                    if (category != "main" && !categories.contains(category)) {
+                    if (category != "Главная" && !categories.contains(category)) {
                         categories.add(category)
                     }
                 }
@@ -47,7 +47,7 @@ class HomeFragment : Fragment() {
 
     private fun setupViewPagerAndTabs(categories: List<String>) {
         val fragments = categories.map { categoryName ->
-            if (categoryName == "main") {
+            if (categoryName == "Главная") {
                 MainCategoryFragment()  // Используется специализированный фрагмент для "main"
             } else {
                 BaseCategoryFragment.newInstance(categoryName)

@@ -42,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="25dp"
                     android:fontFamily="@font/poppins_light"
-                    android:text="My Cart"
+                    android:text="Корзина"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="@id/imageCloseCart"
@@ -116,7 +116,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
                 android:fontFamily="@font/sf_pro_display"
-                android:text="Total"
+                android:text="ИТОГО"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -143,18 +143,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-            android:id="@+id/buttonCheckout"
-            style="@style/blueButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="45dp"
-            android:layout_marginBottom="20dp"
-            android:text="Check out"
-            app:layout_constraintEnd_toEndOf="@id/rightGuideLine"
-            app:layout_constraintStart_toStartOf="@id/leftGuideLine"
-            app:layout_constraintTop_toBottomOf="@id/totalBoxContainer"
-            app:spinning_bar_color="@color/white" />
+
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -191,7 +180,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_light"
                 android:gravity="center"
-                android:text="Your shopping cart is empty"
+                android:text="Корзина пуста"
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 app:layout_constraintTop_toBottomOf="@id/imageEmptyBoxTexture"
