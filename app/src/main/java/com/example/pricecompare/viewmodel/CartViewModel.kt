@@ -27,14 +27,8 @@ class CartViewModel(
 
     private var cartProductDocuments = emptyList<DocumentSnapshot>()
 
-//    val productsPrice = cartProducts.map {
-//        when (it) {
-//            is Resource.Success -> {
-//                calculatePrice(it.data!!)
-//            }
-//            else -> null
-//        }
-//    }
+
+
 
     val productsPrice = cartProducts.map { resource ->
         when (resource) {
@@ -43,11 +37,6 @@ class CartViewModel(
         }
     }
 
-//    private fun calculatePrice(data: List<CartProduct>): Float {
-//        return data.sumByDouble { cartProduct ->
-//            (cartProduct.product.price * cartProduct.quantity).toDouble()
-//        }.toFloat()
-//    }
 
     private fun calculatePrice(data: List<CartProduct>): Map<String, Float> {
         return data.groupBy { it.product.shop }
@@ -70,16 +59,39 @@ class CartViewModel(
     }
 
 
+//    private fun getCartProducts() {
+//        viewModelScope.launch { _cartProducts.emit(Resource.Loading()) }
+//        firestore.collection("cart")
+//            .addSnapshotListener { value, error ->
+//                if (error != null || value == null) {
+//                    viewModelScope.launch { _cartProducts.emit(Resource.Error(error?.message.toString())) }
+//                } else {
+//                    cartProductDocuments = value.documents
+//                    val cartProducts = value.toObjects(CartProduct::class.java)
+//                    viewModelScope.launch { _cartProducts.emit(Resource.Success(cartProducts)) }
+//                }
+//            }
+//    }
+
+
     private fun getCartProducts() {
-        viewModelScope.launch { _cartProducts.emit(Resource.Loading()) }
+        viewModelScope.launch {
+            _cartProducts.emit(Resource.Loading())
+        }
         firestore.collection("cart")
             .addSnapshotListener { value, error ->
                 if (error != null || value == null) {
-                    viewModelScope.launch { _cartProducts.emit(Resource.Error(error?.message.toString())) }
+                    viewModelScope.launch {
+                        _cartProducts.emit(Resource.Error(error?.message.toString()))
+                    }
                 } else {
                     cartProductDocuments = value.documents
                     val cartProducts = value.toObjects(CartProduct::class.java)
-                    viewModelScope.launch { _cartProducts.emit(Resource.Success(cartProducts)) }
+                    // Сортировка списка продуктов по названию магазина перед эмиссией
+                    val sortedCartProducts = cartProducts.sortedBy { it.shop }
+                    viewModelScope.launch {
+                        _cartProducts.emit(Resource.Success(sortedCartProducts))
+                    }
                 }
             }
     }

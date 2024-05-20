@@ -45,15 +45,6 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
             findNavController().navigateUp()
         }
 
-//        var totalPrice = 0f
-//        lifecycleScope.launchWhenStarted {
-//            viewModel.productsPrice.collectLatest { price ->
-//                price?.let {
-//                    totalPrice = it
-//                    binding.tvTotalPrice.text = "RUB $price"
-//                }
-//            }
-//        }
 
         var totalPriceByShop = mapOf<String, Float>()
         lifecycleScope.launchWhenStarted {

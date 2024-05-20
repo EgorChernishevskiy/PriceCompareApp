@@ -1,5 +1,6 @@
 package com.example.pricecompare.adapters
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
@@ -13,7 +14,14 @@ import com.example.pricecompare.data.Product
 import com.example.pricecompare.databinding.CartProductItemBinding
 
 
-class CartProductAdapter: RecyclerView.Adapter<CartProductAdapter.CartProductsViewHolder>() {
+class CartProductAdapter(): RecyclerView.Adapter<CartProductAdapter.CartProductsViewHolder>() {
+
+    companion object {
+        private const val TYPE_STORE = 0
+        private const val TYPE_ITEM = 1
+    }
+
+
 
     inner class CartProductsViewHolder(val binding: CartProductItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
