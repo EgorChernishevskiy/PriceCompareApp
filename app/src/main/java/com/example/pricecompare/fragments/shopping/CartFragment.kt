@@ -41,6 +41,10 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
 
         setupCartRv()
 
+        binding.imageCloseCart.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
 //        var totalPrice = 0f
 //        lifecycleScope.launchWhenStarted {
 //            viewModel.productsPrice.collectLatest { price ->
@@ -57,7 +61,7 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
                 priceMap?.let {
                     totalPriceByShop = it
                     binding.tvTotalPrice.text = totalPriceByShop.entries.joinToString(separator = "\n") {
-                        "${it.key}: RUB ${it.value}"
+                        "${it.key}: RUB ${String.format("%.2f", it.value)}"
                     }
                 }
             }

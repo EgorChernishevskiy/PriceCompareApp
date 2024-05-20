@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.pricecompare.adapters.ProductDetailsAdapter
 import com.example.pricecompare.databinding.FragmentProductDetailsBinding
@@ -48,6 +49,10 @@ class ProductDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupProductDetailsRecyclerView()
+
+        binding.imageClose.setOnClickListener {
+            findNavController().navigateUp()
+        }
 
         binding.apply {
             tvNameOfTheProduct.text = productName
