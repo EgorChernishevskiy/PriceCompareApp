@@ -54,14 +54,14 @@
 
         <TextView
             android:id="@+id/tvProductShop"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
+            android:layout_width="113dp"
+            android:layout_height="16dp"
             android:layout_marginStart="28dp"
             android:layout_marginTop="12dp"
             android:fontFamily="@font/sf_pro_display"
             android:text="Magnit"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@+id/tvProductPrice"
             app:layout_constraintTop_toBottomOf="@+id/tvProductName" />
 

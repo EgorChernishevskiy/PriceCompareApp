@@ -20,7 +20,7 @@ class CategoryViewModel(private val firestore: FirebaseFirestore, private val ca
     }
 
     fun loadProducts() {
-        firestore.collection("Products")
+        firestore.collection("Product1")
             .limit(pagingInfo.productsPage * 10)
             .whereEqualTo("category", categoryName)
             .get()

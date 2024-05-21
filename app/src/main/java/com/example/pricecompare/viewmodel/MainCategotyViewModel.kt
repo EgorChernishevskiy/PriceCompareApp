@@ -78,7 +78,7 @@ class MainCategotyViewModel(
             _specialProducts.value = Resource.Loading()
 
             // Получаем все продукты
-            firestore.collection("Products")
+            firestore.collection("Product1")
                 .limit(pagingInfo.BestProductspage * 10)
                 .get()
                 .addOnSuccessListener { documents ->

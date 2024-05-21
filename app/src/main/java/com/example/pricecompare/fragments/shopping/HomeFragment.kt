@@ -28,7 +28,7 @@ class HomeFragment : Fragment() {
 
     private fun loadCategoriesFromFirestore() {
         val db = FirebaseFirestore.getInstance()
-        db.collection("Products")
+        db.collection("Product1")
             .get()
             .addOnSuccessListener { result ->
                 val categories = mutableListOf<String>("Главная")  // "main" добавляется первым в список

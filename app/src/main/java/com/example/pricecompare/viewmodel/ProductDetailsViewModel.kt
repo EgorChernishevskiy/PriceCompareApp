@@ -70,7 +70,7 @@ class ProductDetailsViewModel(private val firestore: FirebaseFirestore, private 
     }
 
     fun loadProducts() {
-        firestore.collection("Products")
+        firestore.collection("Product1")
             .whereEqualTo("name", productName)
             .get()
             .addOnSuccessListener { result ->

@@ -19,7 +19,7 @@ class SearchViewModel(private val firestore: FirebaseFirestore) : ViewModel() {
         val normalizedQuery = normalize(query)
         viewModelScope.launch {
             try {
-                firestore.collection("Products")
+                firestore.collection("Product1")
                     .get()
                     .addOnSuccessListener { result ->
                         val products = result.documents.mapNotNull { document ->

@@ -33,8 +33,8 @@
 
         <TextView
             android:id="@+id/tvProductCartName"
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
+            android:layout_width="146dp"
+            android:layout_height="66dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:fontFamily="@font/poppins_light"
@@ -43,7 +43,7 @@
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/imageCartProduct"
-            app:layout_constraintTop_toTopOf="@id/imageCartProduct"/>
+            app:layout_constraintTop_toTopOf="@id/imageCartProduct" />
 
 
         <TextView
@@ -87,16 +87,15 @@
             android:id="@+id/tvProductCartShop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="160dp"
             android:fontFamily="@font/sf_pro_display"
             android:text="Magnit"
             android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tvProductCartPrice"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintStart_toEndOf="@+id/imageCartProduct"
+            app:layout_constraintTop_toBottomOf="@+id/tvProductCartPrice"
+            app:layout_constraintVertical_bias="0.434" />
 
         <TextView
             android:id="@+id/tvCartProductQuantity"
