@@ -22,10 +22,10 @@ class ProductSearchAdapter(private val viewModel: SearchViewModel) : RecyclerVie
                 tvProductShop.text = product.shop
                 tvProductPrice.text = product.price.toString()
 
-//                btnAddToCart.setOnClickListener {
-//                    val cartProduct = CartProduct(product, 1, product.shop)
-//                    viewModel.addUpdateProductInCart(cartProduct)
-//                }
+                btnAddToCart.setOnClickListener {
+                    val cartProduct = CartProduct(product, 1, product.shop)
+                    viewModel.addUpdateProductInCart(cartProduct)
+                }
             }
         }
     }
@@ -53,9 +53,15 @@ class ProductSearchAdapter(private val viewModel: SearchViewModel) : RecyclerVie
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = differ.currentList[position]
         holder.bind(product, viewModel)
+
+        holder.itemView.setOnClickListener{
+            onClick?.invoke(product)
+        }
     }
 
     override fun getItemCount(): Int {
         return differ.currentList.size
     }
+
+    var onClick:((Product) -> Unit)? = null
 }

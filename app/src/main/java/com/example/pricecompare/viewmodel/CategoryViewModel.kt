@@ -3,11 +3,14 @@ package com.example.pricecompare.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import com.example.pricecompare.data.Product
 import com.example.pricecompare.utils.Resource
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class CategoryViewModel(private val firestore: FirebaseFirestore, private val categoryName: String?) : ViewModel() {
     private val _products = MutableStateFlow<Resource<List<Product>>>(Resource.Unspecified())
@@ -20,11 +23,18 @@ class CategoryViewModel(private val firestore: FirebaseFirestore, private val ca
     }
 
     fun loadProducts() {
-        firestore.collection("Product1")
-            .limit(pagingInfo.productsPage * 10)
-            .whereEqualTo("category", categoryName)
-            .get()
-            .addOnSuccessListener { result ->
+        if (pagingInfo.isPagingEnd) return
+
+        _products.value = Resource.Loading()
+
+        viewModelScope.launch {
+            try {
+                val result = firestore.collection("Product1")
+                    .whereEqualTo("category", categoryName)
+                    .limit(pagingInfo.productsPage * 10)
+                    .get()
+                    .await()
+
                 val productsList = result.map { document ->
                     Product(
                         id = document.id,
@@ -37,10 +47,18 @@ class CategoryViewModel(private val firestore: FirebaseFirestore, private val ca
                         images = document.get("images") as List<String>? ?: listOf()
                     )
                 }
-                pagingInfo.isPagingEnd = productsList == pagingInfo.oldProducts
-                pagingInfo.oldProducts = productsList
-                _products.value = Resource.Success(productsList)
+
+                if (productsList.isEmpty()) {
+                    pagingInfo.isPagingEnd = true
+                } else {
+                    pagingInfo.productsPage++
+                    pagingInfo.oldProducts += productsList
+                    _products.value = Resource.Success(pagingInfo.oldProducts)
+                }
+            } catch (e: Exception) {
+                _products.value = Resource.Error(e.message ?: "An error occurred")
             }
+        }
     }
 }
 

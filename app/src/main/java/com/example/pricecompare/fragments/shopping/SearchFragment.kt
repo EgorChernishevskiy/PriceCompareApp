@@ -11,9 +11,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.pricecompare.R
 import com.example.pricecompare.adapters.ProductSearchAdapter
+import com.example.pricecompare.adapters.ProductsAdapter
 import com.example.pricecompare.databinding.FragmentSearchBinding
+import com.example.pricecompare.firebase.FirebaseCommon
 import com.example.pricecompare.utils.Resource
 import com.example.pricecompare.viewmodel.SearchViewModel
 import com.example.pricecompare.viewmodel.factory.SearchViewModelFactory
@@ -31,7 +35,8 @@ class SearchFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val firestore = FirebaseFirestore.getInstance()
-        val factory = SearchViewModelFactory(firestore)
+        val firebaseCommon = FirebaseCommon(firestore)
+        val factory = SearchViewModelFactory(firestore, firebaseCommon)
         viewModel = ViewModelProvider(this, factory).get(SearchViewModel::class.java)
     }
 
@@ -45,6 +50,11 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupSearchRecyclerView()
+
+        productAdapter.onClick = {
+            val b = Bundle().apply { putString("productName", it.name) }
+            findNavController().navigate(R.id.action_searchFragment_to_productDetailsFragment, b)
+        }
 
         binding.searchEditText.doOnTextChanged { text, _, _, _ ->
             if (!text.isNullOrEmpty()) {
