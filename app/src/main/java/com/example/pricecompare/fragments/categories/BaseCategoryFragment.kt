@@ -72,12 +72,11 @@ class BaseCategoryFragment : Fragment() {
             }
         }
 
-        binding.nestedScrollBaseCategory.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener{ v, _, scrollY, _, _ ->
-            if (v.getChildAt(0).bottom <= v.height + scrollY){
+        binding.nestedScrollBaseCategory.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
+            if (v.getChildAt(0).bottom <= v.height + scrollY) {
                 viewModel.loadProducts()
             }
         })
-
     }
 
     companion object {
@@ -91,19 +90,12 @@ class BaseCategoryFragment : Fragment() {
             return fragment
         }
     }
+
     private fun setupProductsRecyclerView() {
         productsAdapter = ProductsAdapter()
         binding.rvProducts.apply {
             layoutManager = GridLayoutManager(context, 2) // Grid layout to show products in a grid
             adapter = productsAdapter
         }
-    }
-
-    private fun showLoading() {
-        binding.baseCategoryProgressBar.visibility = View.VISIBLE
-    }
-
-    private fun hideLoading() {
-        binding.baseCategoryProgressBar.visibility = View.GONE
     }
 }

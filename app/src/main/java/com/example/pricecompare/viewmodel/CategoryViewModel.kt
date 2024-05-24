@@ -1,12 +1,11 @@
 package com.example.pricecompare.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.pricecompare.data.Product
 import com.example.pricecompare.utils.Resource
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -16,24 +15,29 @@ class CategoryViewModel(private val firestore: FirebaseFirestore, private val ca
     private val _products = MutableStateFlow<Resource<List<Product>>>(Resource.Unspecified())
     val products: StateFlow<Resource<List<Product>>> = _products
 
-    private val pagingInfo = pagingInfoCategory()
+    private val pagingInfo = PagingInfoCategory()
 
     init {
         loadProducts()
     }
 
     fun loadProducts() {
-        if (pagingInfo.isPagingEnd) return
+        if (pagingInfo.isPagingEnd || pagingInfo.isLoading) return
 
+        pagingInfo.isLoading = true
         _products.value = Resource.Loading()
 
         viewModelScope.launch {
             try {
-                val result = firestore.collection("Product1")
+                val query = firestore.collection("Product1")
                     .whereEqualTo("category", categoryName)
-                    .limit(pagingInfo.productsPage * 10)
-                    .get()
-                    .await()
+                    .limit(pagingInfo.pageSize)
+
+                val result = if (pagingInfo.lastDocument != null) {
+                    query.startAfter(pagingInfo.lastDocument!!).get().await()
+                } else {
+                    query.get().await()
+                }
 
                 val productsList = result.map { document ->
                     Product(
@@ -51,20 +55,26 @@ class CategoryViewModel(private val firestore: FirebaseFirestore, private val ca
                 if (productsList.isEmpty()) {
                     pagingInfo.isPagingEnd = true
                 } else {
+                    pagingInfo.lastDocument = result.documents.last()
                     pagingInfo.productsPage++
                     pagingInfo.oldProducts += productsList
                     _products.value = Resource.Success(pagingInfo.oldProducts)
                 }
+
             } catch (e: Exception) {
                 _products.value = Resource.Error(e.message ?: "An error occurred")
+            } finally {
+                pagingInfo.isLoading = false
             }
         }
     }
 }
 
-internal data class pagingInfoCategory(
+internal data class PagingInfoCategory(
     var productsPage: Long = 1,
     var oldProducts: List<Product> = emptyList(),
-    var isPagingEnd: Boolean = false
-
+    var isPagingEnd: Boolean = false,
+    var lastDocument: DocumentSnapshot? = null,
+    var isLoading: Boolean = false,
+    val pageSize: Long = 10
 )

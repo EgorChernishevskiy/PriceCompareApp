@@ -68,6 +68,8 @@ class SearchViewModel(private val firestore: FirebaseFirestore,
         }
     }
 
+
+
     fun searchProducts(query: String) {
         val normalizedQuery = normalize(query)
         viewModelScope.launch {
