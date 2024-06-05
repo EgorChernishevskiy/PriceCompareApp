@@ -31,7 +31,7 @@ class HomeFragment : Fragment() {
         db.collection("Product1")
             .get()
             .addOnSuccessListener { result ->
-                val categories = mutableListOf<String>("Главная")  // "main" добавляется первым в список
+                val categories = mutableListOf<String>("Главная")
                 for (document in result) {
                     val category = document.getString("category") ?: continue
                     if (category != "Главная" && !categories.contains(category)) {
@@ -48,7 +48,7 @@ class HomeFragment : Fragment() {
     private fun setupViewPagerAndTabs(categories: List<String>) {
         val fragments = categories.map { categoryName ->
             if (categoryName == "Главная") {
-                MainCategoryFragment()  // Используется специализированный фрагмент для "main"
+                MainCategoryFragment()
             } else {
                 BaseCategoryFragment.newInstance(categoryName)
             }
@@ -57,8 +57,7 @@ class HomeFragment : Fragment() {
         binding.viewpagerHome.adapter = adapter
 
         TabLayoutMediator(binding.tabLayout, binding.viewpagerHome) { tab, position ->
-            tab.text = if (categories[position] == "main") "Main" else categories[position]
+            tab.text = categories[position]
         }.attach()
     }
 }
-

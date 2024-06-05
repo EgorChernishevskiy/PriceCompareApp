@@ -17,8 +17,7 @@ import kotlinx.coroutines.launch
 class CartViewModel(
     private val firestore: FirebaseFirestore,
     private val firebaseCommon: FirebaseCommon
-): ViewModel()
-{
+): ViewModel() {
     private val _deleteDialog = MutableSharedFlow<CartProduct>()
     val deleteDialog = _deleteDialog.asSharedFlow()
 
@@ -27,9 +26,6 @@ class CartViewModel(
 
     private var cartProductDocuments = emptyList<DocumentSnapshot>()
 
-
-
-
     val productsPrice = cartProducts.map { resource ->
         when (resource) {
             is Resource.Success -> calculatePrice(resource.data!!)
@@ -37,12 +33,12 @@ class CartViewModel(
         }
     }
 
-
     private fun calculatePrice(data: List<CartProduct>): Map<String, Float> {
-        return data.groupBy { it.product.shop }
+        return data.groupBy { it.shop }
             .mapValues { (_, products) ->
                 products.sumByDouble { cartProduct ->
-            (cartProduct.product.price * cartProduct.quantity).toDouble() }.toFloat()
+                    (cartProduct.product.price * cartProduct.quantity).toDouble()
+                }.toFloat()
             }
     }
 
@@ -54,25 +50,10 @@ class CartViewModel(
                 .document(documentId).delete()
         }
     }
+
     init {
         getCartProducts()
     }
-
-
-//    private fun getCartProducts() {
-//        viewModelScope.launch { _cartProducts.emit(Resource.Loading()) }
-//        firestore.collection("cart")
-//            .addSnapshotListener { value, error ->
-//                if (error != null || value == null) {
-//                    viewModelScope.launch { _cartProducts.emit(Resource.Error(error?.message.toString())) }
-//                } else {
-//                    cartProductDocuments = value.documents
-//                    val cartProducts = value.toObjects(CartProduct::class.java)
-//                    viewModelScope.launch { _cartProducts.emit(Resource.Success(cartProducts)) }
-//                }
-//            }
-//    }
-
 
     private fun getCartProducts() {
         viewModelScope.launch {
@@ -87,58 +68,31 @@ class CartViewModel(
                 } else {
                     cartProductDocuments = value.documents
                     val cartProducts = value.toObjects(CartProduct::class.java)
-                    // Сортировка списка продуктов по названию магазина перед эмиссией
-                    val sortedCartProducts = cartProducts.sortedBy { it.shop }
                     viewModelScope.launch {
-                        _cartProducts.emit(Resource.Success(sortedCartProducts))
+                        _cartProducts.emit(Resource.Success(cartProducts))
                     }
                 }
             }
     }
 
-    fun changeQuantity(
-        cartProduct: CartProduct,
-        quantityChanging: FirebaseCommon.QuantityChanging
-    ) {
-
+    fun changeQuantity(cartProduct: CartProduct, quantityChanging: FirebaseCommon.QuantityChanging) {
         val index = cartProducts.value.data?.indexOf(cartProduct)
-
-        /**
-         * index could be equal to -1 if the function [getCartProducts] delays which will also delay the result we expect to be inside the [_cartProducts]
-         * and to prevent the app from crashing we make a check
-         */
         if (index != null && index != -1) {
             val documentId = cartProductDocuments[index].id
-            when (quantityChanging) {
-                FirebaseCommon.QuantityChanging.INCREASE -> {
-                    viewModelScope.launch { _cartProducts.emit(Resource.Loading()) }
-                    increaseQuantity(documentId)
-                }
-                FirebaseCommon.QuantityChanging.DECREASE -> {
-                    if (cartProduct.quantity == 1) {
-                        viewModelScope.launch { _deleteDialog.emit(cartProduct) }
-                        return
-                    }
-                    viewModelScope.launch { _cartProducts.emit(Resource.Loading()) }
-                    decreaseQuantity(documentId)
+            val newQuantity = when (quantityChanging) {
+                FirebaseCommon.QuantityChanging.INCREASE -> cartProduct.quantity + 1
+                FirebaseCommon.QuantityChanging.DECREASE -> cartProduct.quantity - 1
+            }
+
+            if (newQuantity > 0) {
+                firestore.collection("cart")
+                    .document(documentId)
+                    .update("quantity", newQuantity)
+            } else {
+                viewModelScope.launch {
+                    _deleteDialog.emit(cartProduct)
                 }
             }
-        }
-    }
-
-
-
-    private fun decreaseQuantity(documentId: String) {
-        firebaseCommon.decreaseQuantity(documentId) { result, exception ->
-            if (exception != null)
-                viewModelScope.launch { _cartProducts.emit(Resource.Error(exception.message.toString())) }
-        }
-    }
-
-    private fun increaseQuantity(documentId: String) {
-        firebaseCommon.increaseQuantity(documentId) { result, exception ->
-            if (exception != null)
-                viewModelScope.launch { _cartProducts.emit(Resource.Error(exception.message.toString())) }
         }
     }
 }

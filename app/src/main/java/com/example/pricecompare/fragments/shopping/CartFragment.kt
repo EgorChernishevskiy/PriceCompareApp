@@ -1,11 +1,12 @@
 package com.example.pricecompare.fragments.shopping
 
-
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pricecompare.R
 import com.example.pricecompare.adapters.CartProductAdapter
+import com.example.pricecompare.data.CartProduct
 import com.example.pricecompare.databinding.FragmentCartBinding
 import com.example.pricecompare.firebase.FirebaseCommon
 import com.example.pricecompare.utils.Resource
@@ -24,7 +26,6 @@ import kotlinx.coroutines.flow.collectLatest
 
 class CartFragment : Fragment(R.layout.fragment_cart) {
     private lateinit var binding: FragmentCartBinding
-    private val cartAdapter by lazy { CartProductAdapter() }
     private val viewModel by activityViewModels<CartViewModel>()
 
     override fun onCreateView(
@@ -39,49 +40,37 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupCartRv()
-
         binding.imageCloseCart.setOnClickListener {
             findNavController().navigateUp()
         }
 
-
-        var totalPriceByShop = mapOf<String, Float>()
         lifecycleScope.launchWhenStarted {
-            viewModel.productsPrice.collectLatest { priceMap ->
-                priceMap?.let {
-                    totalPriceByShop = it
-                    binding.tvTotalPrice.text = totalPriceByShop.entries.joinToString(separator = "\n") {
-                        "${it.key}: RUB ${String.format("%.2f", it.value)}"
+            viewModel.cartProducts.collectLatest { resource ->
+                when (resource) {
+                    is Resource.Loading -> {
+                        binding.layoutCartEmpty.visibility = View.GONE
                     }
+                    is Resource.Success -> {
+                        if (resource.data!!.isEmpty()) {
+                            showEmptyCart()
+                        } else {
+                            hideEmptyCart()
+                            val shopProductMap = resource.data.groupBy { it.shop }
+                            createCartViews(shopProductMap)
+                        }
+                    }
+                    is Resource.Error -> {
+                        Toast.makeText(requireContext(), resource.message, Toast.LENGTH_SHORT).show()
+                    }
+                    else -> Unit
                 }
             }
         }
 
-        cartAdapter.onProductClick = {
-            val b = Bundle().apply { putString("productName", it.product.name) }
-            findNavController().navigate(R.id.action_cartFragment_to_productDetailsFragment, b)
-        }
-
-        cartAdapter.onPlusClick = {
-            viewModel.changeQuantity(it, FirebaseCommon.QuantityChanging.INCREASE)
-        }
-
-        cartAdapter.onMinusClick = {
-            viewModel.changeQuantity(it, FirebaseCommon.QuantityChanging.DECREASE)
-        }
-
-//        binding.buttonCheckout.setOnClickListener {
-//            val action = CartFragmentDirections.actionCartFragmentToBillingFragment2(totalPrice,cartAdapter.differ.currentList.toTypedArray(),true)
-//            findNavController().navigate(action)
-//        }
-
-
-
         lifecycleScope.launchWhenStarted {
             viewModel.deleteDialog.collectLatest {
                 val alertDialog = AlertDialog.Builder(requireContext()).apply {
-                    setTitle("Удлать продукт из корзины")
+                    setTitle("Удалить продукт из корзины")
                     setMessage("Вы хотите удалить продукт из корзины?")
                     setNegativeButton("Отмена") { dialog, _ ->
                         dialog.dismiss()
@@ -95,67 +84,48 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
                 alertDialog.show()
             }
         }
+    }
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.cartProducts.collectLatest {
-                when (it) {
-                    is Resource.Loading -> {
-                        binding.progressbarCart.visibility = View.VISIBLE
-                    }
-                    is Resource.Success -> {
-                        binding.progressbarCart.visibility = View.INVISIBLE
-                        if (it.data!!.isEmpty()) {
-                            showEmptyCart()
-                            hideOtherViews()
-                        } else {
-                            hideEmptyCart()
-                            showOtherViews()
-                            cartAdapter.differ.submitList(it.data)
-                        }
-                    }
-                    is Resource.Error -> {
-                        binding.progressbarCart.visibility = View.INVISIBLE
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                    }
-                    else -> Unit
-                }
+    private fun createCartViews(shopProductMap: Map<String, List<CartProduct>>) {
+        binding.linearLayoutCartContainers.removeAllViews()
+        for ((shop, products) in shopProductMap) {
+            val shopContainer = LayoutInflater.from(requireContext()).inflate(R.layout.shop_cart_container, null)
+            val recyclerView = shopContainer.findViewById<RecyclerView>(R.id.rvCart)
+            val totalTextView = shopContainer.findViewById<TextView>(R.id.tvTotalPrice)
+
+            val cartAdapter = CartProductAdapter(shop)
+            recyclerView.apply {
+                layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+                adapter = cartAdapter
+                addItemDecoration(VerticalItemDecoration())
             }
-        }
-    }
+            cartAdapter.differ.submitList(products)
 
-    private fun showOtherViews() {
-        binding.apply {
-            rvCart.visibility = View.VISIBLE
-            totalBoxContainer.visibility = View.VISIBLE
-            //buttonCheckout.visibility = View.VISIBLE
-        }
-    }
+            cartAdapter.onProductClick = { cartProduct ->
+                val b = Bundle().apply { putString("productName", cartProduct.product.name) }
+                findNavController().navigate(R.id.action_cartFragment_to_productDetailsFragment, b)
+            }
 
-    private fun hideOtherViews() {
-        binding.apply {
-            rvCart.visibility = View.GONE
-            totalBoxContainer.visibility = View.GONE
-            //buttonCheckout.visibility = View.GONE
-        }
-    }
+            cartAdapter.onPlusClick = { cartProduct ->
+                viewModel.changeQuantity(cartProduct, FirebaseCommon.QuantityChanging.INCREASE)
+            }
 
-    private fun hideEmptyCart() {
-        binding.apply {
-            layoutCartEmpty.visibility = View.GONE
+            cartAdapter.onMinusClick = { cartProduct ->
+                viewModel.changeQuantity(cartProduct, FirebaseCommon.QuantityChanging.DECREASE)
+            }
+
+            val total = products.sumOf { it.product.price.toDouble() * it.quantity }
+            totalTextView.text = "Итого: RUB ${String.format("%.2f", total)}"
+
+            binding.linearLayoutCartContainers.addView(shopContainer)
         }
     }
 
     private fun showEmptyCart() {
-        binding.apply {
-            layoutCartEmpty.visibility = View.VISIBLE
-        }
+        binding.layoutCartEmpty.visibility = View.VISIBLE
     }
 
-    private fun setupCartRv() {
-        binding.rvCart.apply {
-            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-            adapter = cartAdapter
-            addItemDecoration(VerticalItemDecoration())
-        }
+    private fun hideEmptyCart() {
+        binding.layoutCartEmpty.visibility = View.GONE
     }
 }

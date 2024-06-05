@@ -1,8 +1,5 @@
 package com.example.pricecompare.adapters
 
-import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -10,18 +7,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.pricecompare.data.CartProduct
-import com.example.pricecompare.data.Product
 import com.example.pricecompare.databinding.CartProductItemBinding
 
-
-class CartProductAdapter(): RecyclerView.Adapter<CartProductAdapter.CartProductsViewHolder>() {
-
-    companion object {
-        private const val TYPE_STORE = 0
-        private const val TYPE_ITEM = 1
-    }
-
-
+class CartProductAdapter(private val shopId: String) : RecyclerView.Adapter<CartProductAdapter.CartProductsViewHolder>() {
 
     inner class CartProductsViewHolder(val binding: CartProductItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -34,10 +22,20 @@ class CartProductAdapter(): RecyclerView.Adapter<CartProductAdapter.CartProducts
                 tvProductCartPrice.text = cartProduct.product.price.toString()
                 tvProductCartShop.text = cartProduct.shop
 
+                imagePlus.setOnClickListener {
+                    onPlusClick?.invoke(cartProduct)
+                }
+
+                imageMinus.setOnClickListener {
+                    onMinusClick?.invoke(cartProduct)
+                }
+
+                itemView.setOnClickListener {
+                    onProductClick?.invoke(cartProduct)
                 }
             }
         }
-
+    }
 
     private val diffCallback = object : DiffUtil.ItemCallback<CartProduct>() {
         override fun areItemsTheSame(oldItem: CartProduct, newItem: CartProduct): Boolean {
@@ -62,18 +60,6 @@ class CartProductAdapter(): RecyclerView.Adapter<CartProductAdapter.CartProducts
     override fun onBindViewHolder(holder: CartProductsViewHolder, position: Int) {
         val cartProduct = differ.currentList[position]
         holder.bind(cartProduct)
-
-        holder.itemView.setOnClickListener {
-            onProductClick?.invoke(cartProduct)
-        }
-
-        holder.binding.imagePlus.setOnClickListener {
-            onPlusClick?.invoke(cartProduct)
-        }
-
-        holder.binding.imageMinus.setOnClickListener {
-            onMinusClick?.invoke(cartProduct)
-        }
     }
 
     override fun getItemCount(): Int {
@@ -83,7 +69,4 @@ class CartProductAdapter(): RecyclerView.Adapter<CartProductAdapter.CartProducts
     var onProductClick: ((CartProduct) -> Unit)? = null
     var onPlusClick: ((CartProduct) -> Unit)? = null
     var onMinusClick: ((CartProduct) -> Unit)? = null
-
-
-
 }
