@@ -115,7 +115,7 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
             }
 
             val total = products.sumOf { it.product.price.toDouble() * it.quantity }
-            totalTextView.text = "Итого: RUB ${String.format("%.2f", total)}"
+            totalTextView.text = "Итого ${shop}: RUB ${String.format("%.2f", total)}"
 
             binding.linearLayoutCartContainers.addView(shopContainer)
         }

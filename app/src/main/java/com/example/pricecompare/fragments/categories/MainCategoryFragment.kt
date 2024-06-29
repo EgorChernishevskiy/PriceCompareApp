@@ -44,11 +44,9 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
     ): View? {
         binding = FragmentMainCategoryBinding.inflate(inflater)
 
-        // Создание Firestore экземпляра (пример, может быть изменен в зависимости от вашего кода)
         val firestore = FirebaseFirestore.getInstance()
         val firebaseCommon = FirebaseCommon(firestore)
 
-        // Использование фабрики для создания ViewModel
         val factory = MainCategoryViewModelFactory(firestore, firebaseCommon)
         viewModel = ViewModelProvider(this, factory).get(MainCategotyViewModel::class.java)
 
@@ -66,7 +64,6 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
         }
 
 
-        // Используйте repeatOnLifecycle для управления корутинами в зависимости от жизненного цикла
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.specialProducts.collectLatest {
